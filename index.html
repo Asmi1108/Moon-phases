@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moon Phases</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .moon-phase {
+      font-size: 24px;
+      margin: 10px 0;
+      font-style: italic;
+      letter-spacing: 1px;
+      text-transform: capitalize;
+    }
+
+    .moon-info {
+      font-size: 18px;
+      margin: 20px;
+      line-height: 1.5;
+      max-width: 600px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+    }
+
+    .moon-outline {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .moon-outline::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #fff;
+      clip-path: var(--moon-clip, circle(0%));
+    }
+  </style>
+</head>
+<body>
+  <h1>Moon Phases!</h1>
+  <div class="moon-outline" id="moon-outline"></div>
+  <div class="moon-phase" id="moon-phase"></div>
+  <div class="moon-info" id="moon-info"></div>
+
+  <script>
+    const moonPhases = [
+      { phase: "New Moon", description: "The moon is not visible from Earth.", clip: "circle(100%)" },
+      { phase: "Waxing Crescent", description: "A sliver of the moon is visible.", clip: "inset(0 75% 0 0)" },
+      { phase: "First Quarter", description: "Half of the moon is illuminated.", clip: "inset(0 50% 0 0)" },
+      { phase: "Waxing Gibbous", description: "The moon is mostly illuminated.", clip: "inset(0 25% 0 0)" },
+      { phase: "Full Moon", description: "The entire face of the moon is illuminated.", clip: "circle(0%)" },
+      { phase: "Waning Gibbous", description: "The moon is mostly illuminated but waning.", clip: "inset(0 0 0 25%)" },
+      { phase: "Last Quarter", description: "Half of the moon is illuminated but decreasing.", clip: "inset(0 0 0 50%)" },
+      { phase: "Waning Crescent", description: "A sliver of the moon is visible before a new moon.", clip: "inset(0 0 0 75%)" }
+    ];
+
+    // New moon date (most recent)
+    const recentNewMoon = new Date("2024-12-13T23:32:00Z");
+
+    // Calculate moon phase based on current date
+    function calculateMoonPhase(date) {
+      const synodicMonth = 29.53058867; // Length of a synodic month (in days)
+      const daysSinceNewMoon = (date - recentNewMoon) / (1000 * 60 * 60 * 24); // Convert ms to days
+
+      // Calculate the phase index: Divide by the length of a phase (synodic month / 8) and find the remainder
+      const phaseIndex = Math.floor((daysSinceNewMoon % synodicMonth) / (synodicMonth / 8));
+      return phaseIndex;
+    }
+
+    // Update moon phase
+    function updateMoonPhase() {
+      const today = new Date();
+      const phaseIndex = calculateMoonPhase(today);
+      const phaseData = moonPhases[phaseIndex];
+
+      document.getElementById("moon-phase").textContent = phaseData.phase;
+      document.getElementById("moon-info").textContent = phaseData.description;
+
+      const moonOutline = document.getElementById("moon-outline");
+      moonOutline.style.setProperty("--moon-clip", phaseData.clip);
+    }
+
+    updateMoonPhase();
+  </script>
+</body>
+  </html>
+  
